@@ -124,19 +124,19 @@ class Signup extends Component {
                   <br />
                   <div className="row">
 
-                    <div className="col-sm-3"></div>
+                    <div className="col-md-3 col-2"></div>
 
-                    <div className="col-sm-2">
+                    <div className="col-md-2 col-3">
                       <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg" /></a>
                     </div>
 
-                    <div className="col-sm-2"></div>
+                    <div className="col-md-2 col-2"></div>
 
-                    <div className="col-sm-2">
+                    <div className="col-md-2 col-3">
                       <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg" /></a>
                     </div>
 
-                    <div className="col-sm-3"></div>
+                    <div className="col-md-3 col-2"></div>
 
                   </div>
                 </form>

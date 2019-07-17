@@ -58,7 +58,6 @@ const SignedInLinks = (props)=>{
                 {props.user.name}
               </a>
               <div className="dropdown-menu" aria-labelledby="navbarDropdown" style={{padding:"5px"}}>
-                <img src={props.user.authorURL} className="img-fluid mx-auto" style={{borderRadius:"50%",maxHeight:"40vh"}}/>
                 <a className="dropdown-item" href="#" onClick={handleMystories}>My Stories</a>
                 <a className="dropdown-item" href="#" onClick={handleFollowing}>Following</a>
                 <a className="dropdown-item" href="#" onClick={handleBookmarks}>Bookmarks</a>
