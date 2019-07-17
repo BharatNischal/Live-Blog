@@ -127,13 +127,13 @@ class Signup extends Component {
                     <div className="col-md-3 col-2"></div>
 
                     <div className="col-md-2 col-3">
-                      <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg" /></a>
+                      <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg" onClick={()=>{alert("Feature coming soon till then \nsignup/login with email")}}/></a>
                     </div>
 
                     <div className="col-md-2 col-2"></div>
 
                     <div className="col-md-2 col-3">
-                      <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg" /></a>
+                      <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg" onClick={()=>{alert("Feature coming soon till then \nsignup/login with email")}}/></a>
                     </div>
 
                     <div className="col-md-3 col-2"></div>
