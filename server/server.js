@@ -83,20 +83,36 @@ cloudinary.config({
 
 app.post("/api/register",upload,(req,res)=>{
   console.log("file recieved",req.file,"body",req.body);
-  cloudinary.uploader.upload(req.file.path, (result)=> {
-  db.User.register(new db.User({username:req.body.username,name:req.body.name,authorURL:result.secure_url}),req.body.password,(err,user)=>{
-      if(err){
-          console.log(err);
-          res.json({err:err.message,success:"false"});
-      }
-      passport.authenticate("local")(req,res,()=>{
-          res.json({
-              success:"true",
-              user:req.user,
+  if(req.file){
+    cloudinary.uploader.upload(req.file.path, (result)=> {
+      db.User.register(new db.User({username:req.body.username,name:req.body.name,authorURL:result.secure_url}),req.body.password,(err,user)=>{
+          if(err){
+              console.log(err);
+              res.json({err:err.message,success:"false"});
+          }
+          passport.authenticate("local")(req,res,()=>{
+              res.json({
+                  success:"true",
+                  user:req.user,
+              });
           });
       });
-  });
-});
+    });
+  }else{
+    db.User.register(new db.User({username:req.body.username,name:req.body.name}),req.body.password,(err,user)=>{
+        if(err){
+            console.log(err);
+            res.json({err:err.message,success:"false"});
+        }
+        passport.authenticate("local")(req,res,()=>{
+            res.json({
+                success:"true",
+                user:req.user,
+            });
+        });
+    });
+  }
+
 });
 
 app.get("/api/logout",(req,res)=>{
