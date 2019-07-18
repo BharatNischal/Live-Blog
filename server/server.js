@@ -8,7 +8,7 @@ const          express = require('express'),
             bodyParser = require("body-parser"),
                   cors = require("cors"),
                 socket = require('socket.io'),
-                   app = express()
+                   app = express(),
                 multer = require("multer"),
                 path   = require("path");
 
@@ -51,9 +51,7 @@ app.use((req,res,next)=>{
   next();
 });
 
-app.get("/",(req,res)=>{
-    res.json({msg:"HelloWorld!!! from app.js"});
-});
+
 app.use("/blog-api/",BlogRoutes);
 app.get("/api/curUser",(req,res)=>{
   res.json(req.user);
@@ -68,7 +66,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
    storage: storage,
-   limits:{fileSize: 1000000},
+   limits:{fileSize: 10000000000}
 }).single("image");
 
 //auth routes
@@ -76,15 +74,30 @@ const upload = multer({
 var cloudinary = require('cloudinary');
 cloudinary.config({
   cloud_name: 'bharatnischal',
-  api_key: "api_key",
-  api_secret: "api_secret"
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret
 });
 
 
 app.post("/api/register",upload,(req,res)=>{
   console.log("file recieved",req.file,"body",req.body);
-  cloudinary.uploader.upload(req.file.path, (result)=> {
-  db.User.register(new db.User({username:req.body.username,name:req.body.name,authorURL:result.secure_url}),req.body.password,(err,user)=>{
+  if(req.file){
+    cloudinary.uploader.upload(req.file.path, (result)=> {
+      db.User.register(new db.User({username:req.body.username,name:req.body.name,authorURL:result.secure_url}),req.body.password,(err,user)=>{
+          if(err){
+              console.log(err);
+              res.json({err:err.message,success:"false"});
+          }
+          passport.authenticate("local")(req,res,()=>{
+              res.json({
+                  success:"true",
+                  user:req.user,
+              });
+          });
+      });
+    });
+  }else{
+    db.User.register(new db.User({username:req.body.username,name:req.body.name}),req.body.password,(err,user)=>{
       if(err){
           console.log(err);
           res.json({err:err.message,success:"false"});
@@ -95,8 +108,10 @@ app.post("/api/register",upload,(req,res)=>{
               user:req.user,
           });
       });
-  });
-});
+    });
+
+  }
+  
 });
 
 app.get("/api/logout",(req,res)=>{
@@ -118,6 +133,15 @@ app.get("/api/err",(req,res)=>{
   res.json({success:"false"});
 });
 
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static(__dirname+'/../client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '..' , 'client', 'build', 'index.html'));
+  });
+}
+
 
 const port=process.env.PORT || 5000;
 var server=app.listen( port,()=>{
@@ -134,7 +158,8 @@ io.on('connection', (socket) => {
     chkurl.splice(chkurl.length-2,1);
     chkurl=chkurl.join("/");
     console.log(chkurl);
-    if(chkurl==="http://localhost:3000/blog/edit"){
+
+    if(chkurl==="http://localhost:3000/blog/edit" || chkurl==="https://blooming-peak-39402.herokuapp.com/blog/edit"){
       console.log("here!!!");
       const url=socket.request.headers.referer.split("/");
       const blogId=url[url.length-2];
@@ -158,7 +183,7 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('updateContent-keypress', data);
     });
     socket.on('disconnect',function(){
-      if(chkurl==="http://localhost:3000/blog/edit"){
+      if(chkurl==="http://localhost:3000/blog/edit" || chkurl==="https://blooming-peak-39402.herokuapp.com/blog/edit"){
       console.log("here!!!");
       const url=socket.request.headers.referer.split("/");
       const blogId=url[url.length-2];

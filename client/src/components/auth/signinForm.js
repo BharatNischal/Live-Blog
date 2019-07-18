@@ -19,7 +19,7 @@ class Signin extends Component{
   handleSubmit(e){
     e.preventDefault();
 
-    Axios.post("http://localhost:5000/api/login",
+    Axios.post("/api/login",
           {username:this.state.email,
            password:this.state.password
           })
@@ -62,7 +62,7 @@ class Signin extends Component{
       fontFamily:'ariel',
     };
     return(
-      <div className="container mt-5 pt-3">
+<div className="container mt-5 pt-3">
         <div className="row">
 
           <div className="col-md-3 col-sm-0"></div>
@@ -103,19 +103,19 @@ class Signin extends Component{
                     <br/>
                     <div className="row">
 
-                      <div className="col-sm-3"></div>
+                      <div className="col-sm-3 col-2"></div>
 
-                      <div className="col-sm-2">
-                        <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg"/></a>
+                      <div className="col-sm-2 col-3">
+                        <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg" onClick={()=>{alert("Feature coming soon till then \nsignup/login with email")}}/></a>
                       </div>
 
-                      <div className="col-sm-2"></div>
+                      <div className="col-sm-2 col-2"></div>
 
-                      <div className="col-sm-2">
-                        <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg"/></a>
+                      <div className="col-sm-2 col-3">
+                        <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg" onClick={()=>{alert("Feature coming soon till then \nsignup/login with email")}}/></a>
                       </div>
 
-                      <div className="col-sm-3"></div>
+                      <div className="col-sm-3 col-2"></div>
 
                     </div>
                 </form>

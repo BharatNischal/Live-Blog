@@ -32,7 +32,7 @@ class Signup extends Component {
       formData.append('password',this.state.password);
       formData.append('name',this.state.username);
 
-    Axios.post("http://localhost:5000/api/register",formData)
+    Axios.post("/api/register",formData)
       .then(res => {
         if (res.data.success === "true") {
           this.props.login(res.data.user);
@@ -124,19 +124,19 @@ class Signup extends Component {
                   <br />
                   <div className="row">
 
-                    <div className="col-sm-3"></div>
+                    <div className="col-md-3 col-2"></div>
 
-                    <div className="col-sm-2">
-                      <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg" /></a>
+                    <div className="col-md-2 col-3">
+                      <a><img class="social-btn-icon" alt="Login with Google" src="https://hrcdn.net/fcore/assets/google-colored-20b8216731.svg" onClick={()=>{alert("Feature coming soon till then \nsignup/login with email")}}/></a>
                     </div>
 
-                    <div className="col-sm-2"></div>
+                    <div className="col-md-2 col-2"></div>
 
-                    <div className="col-sm-2">
-                      <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg" /></a>
+                    <div className="col-md-2 col-3">
+                      <a><img class="social-btn-icon" alt="Login with Facebook" src="https://hrcdn.net/fcore/assets/facebook-colored-af4249157d.svg" onClick={()=>{alert("Feature coming soon till then \nsignup/login with email")}}/></a>
                     </div>
 
-                    <div className="col-sm-3"></div>
+                    <div className="col-md-3 col-2"></div>
 
                   </div>
                 </form>

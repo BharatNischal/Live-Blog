@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import openSocket from 'socket.io-client';
-const  socket = openSocket('http://localhost:5000');
+
+
+
 
 
 class UpdateBlog extends Component{
@@ -16,11 +18,12 @@ class UpdateBlog extends Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.socket= openSocket(window.location.hostname);
   }
 
   componentDidMount()
   {
-    axios.get(`http://localhost:5000/blog-api/${this.props.match.params.blogId}`)
+    axios.get(`/blog-api/${this.props.match.params.blogId}`)
     .then(res=>{
       const {title,imageURL,content} = res.data
       const {authorURL,username} = res.data.author;
@@ -45,7 +48,7 @@ class UpdateBlog extends Component{
   }
 
   componentWillUnmount(){
-    socket.disconnect();
+    this.socket.disconnect();
   }
   handleChange(e){
     this.setState({[e.target.name]:e.target.value});
@@ -60,7 +63,7 @@ class UpdateBlog extends Component{
 
         console.log("keypress");
 
-        axios.put(`http://localhost:5000/blog-api/${this.state.blogId}`,{title:this.state.title,content:this.state.content,imageURL:this.state.imageURL})
+        axios.put(`/blog-api/${this.state.blogId}`,{title:this.state.title,content:this.state.content,imageURL:this.state.imageURL})
           .then(res=>{
             const updating = document.getElementById('updating');
             updating.innerText = "Saving...";
@@ -72,7 +75,7 @@ class UpdateBlog extends Component{
             alert(err.message);
           });
         setTimeout(()=>{
-          socket.emit('updateContent-keypress',{
+          this.socket.emit('updateContent-keypress',{
             a:startPosition,
             b:endPosition,
             x:x,
@@ -95,7 +98,7 @@ class UpdateBlog extends Component{
       else if(x==8){  //backspace
         console.log("keyup");
 
-        axios.put(`http://localhost:5000/blog-api/${this.state.blogId}`,{title:this.state.title,content:this.state.content,imageURL:this.state.imageURL})
+        axios.put(`/blog-api/${this.state.blogId}`,{title:this.state.title,content:this.state.content,imageURL:this.state.imageURL})
           .then(res=>{
 
             const updating = document.getElementById('updating');
@@ -109,7 +112,7 @@ class UpdateBlog extends Component{
           });
 
           setTimeout(()=>{
-            socket.emit('updateContent-keyup',{
+            this.socket.emit('updateContent-keyup',{
               a:startPosition,
               b:endPosition,
               x:x,
@@ -120,7 +123,7 @@ class UpdateBlog extends Component{
       }else if(x==32){  //space
         console.log("keyup");
 
-        axios.put(`http://localhost:5000/blog-api/${this.state.blogId}`,{title:this.state.title,content:this.state.content,imageURL:this.state.imageURL})
+        axios.put(`/blog-api/${this.state.blogId}`,{title:this.state.title,content:this.state.content,imageURL:this.state.imageURL})
           .then(res=>{
             const updating = document.getElementById('updating');
             updating.innerText = "Saving...";
@@ -133,7 +136,7 @@ class UpdateBlog extends Component{
           });
 
           setTimeout(()=>{
-            socket.emit('updateContent-keyup',{
+            this.socket.emit('updateContent-keyup',{
               a:startPosition,
               b:endPosition,
               x:x,

@@ -46,7 +46,7 @@
   transition: 0.4s;
 }
 @media (min-width:500px){
-  .card:hover{
+  .card.blog:hover{
     transform: scale(1.05);
   
   }

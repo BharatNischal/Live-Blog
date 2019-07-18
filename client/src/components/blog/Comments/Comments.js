@@ -20,7 +20,7 @@ class Comments extends Component {
         e.preventDefault();
         const data={content:this.state.comment};
         console.log(data);
-        axios.post(`http://localhost:5000/blog-api/${this.props.match.params.blogId}/comments`,{data})
+        axios.post(`/blog-api/${this.props.match.params.blogId}/comments`,{data})
         .then(res=>{
 
                 const allC=[...this.state.allComments];
@@ -53,21 +53,24 @@ class Comments extends Component {
                 </div>
                 <div className="col-0 col-md-1"></div>
                 <div className="col-12 col-md-10">
-                    <form className="row mb-4" onSubmit={this.submitHandler}>
-                        <div className="col-8 col-md-8">
-                            <input type="text" name="comment" placeholder="Ener your Comment here!!" className="p-2" style={comStyle} onChange={this.commentChangeHandler} value={this.state.comment} />
-                        </div>
-                        <div className="col-4 col-md-2">
+                    {this.props.curUser?(
+                        <form className="row mb-4" onSubmit={this.submitHandler}>
+                            <div className="col-8 col-md-8">
+                                <input type="text" name="comment" placeholder="Enter your Comment here!!" className="p-2" style={comStyle} onChange={this.commentChangeHandler} value={this.state.comment} />
+                            </div>
+                            <div className="col-4 col-md-2">
 
-                            <button className="btn btn-outline-success" style={{width:'100%'}}>Submit</button>
-                        </div>
-                    </form>
+                                <button className="btn btn-outline-success" style={{width:'100%'}}>Submit</button>
+                            </div>
+                        </form>
+                    ):null
+                    }
                 </div>
                 <div className="col-0 col-md-1"></div>
                 <div className="col-0 col-md-1"></div>
                 <div className="col-12 col-md-10">
                     {this.state.allComments.map(c=>(
-                        <Comment authorURL={this.props.authorURL} key={c._id} content={c.content} author={c.author.name} />
+                        <Comment authorURL={c.author.authorURL} key={c._id} content={c.content} author={c.author.name} />
                     ))}
 
 

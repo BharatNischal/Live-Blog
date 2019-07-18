@@ -7,7 +7,7 @@ const SignedInLinks = (props)=>{
     console.log('props of SignedInLinks',props);
 
     const handleMystories = ()=>{
-      Axios.get("http://localhost:5000/blog-api/mystories")
+      Axios.get("/blog-api/mystories")
         .then(res=>{
           props.history.push('/temp', {result:res.data});
         })
@@ -16,7 +16,7 @@ const SignedInLinks = (props)=>{
         })
     };
     const handleFollowing = ()=>{
-      Axios.get("http://localhost:5000/blog-api/following")
+      Axios.get("/blog-api/following")
         .then(res=>{
           props.history.push('/temp', {result:res.data});
         })
@@ -27,7 +27,7 @@ const SignedInLinks = (props)=>{
 
     const handleBookmarks = ()=>{
       console.log("bookmark clicked");
-      Axios.get("http://localhost:5000/blog-api/bookmarks")
+      Axios.get("/blog-api/bookmarks")
         .then(res=>{
           console.log("results",res.data);
           props.history.push('/temp', {result:res.data});
@@ -39,7 +39,7 @@ const SignedInLinks = (props)=>{
 
     const handleSignOut = (e)=>{
         //e.preventDefault();
-        Axios.get("http://localhost:5000/api/logout")
+        Axios.get("/api/logout")
         .then(res=>{
             if(res.data.msg){
                 props.logout(undefined);
@@ -58,7 +58,7 @@ const SignedInLinks = (props)=>{
                 {props.user.name}
               </a>
               <div className="dropdown-menu" aria-labelledby="navbarDropdown" style={{padding:"5px"}}>
-                <img src={props.user.authorURL} className="img-fluid mx-auto" style={{borderRadius:"50%",maxHeight:"40vh"}}/>
+                <img src={props.user.authorURL} className="img-fluid mx-auto" style={{borderRadius:"50%",height:'60px',width:'60px'}}/>
                 <a className="dropdown-item" href="#" onClick={handleMystories}>My Stories</a>
                 <a className="dropdown-item" href="#" onClick={handleFollowing}>Following</a>
                 <a className="dropdown-item" href="#" onClick={handleBookmarks}>Bookmarks</a>

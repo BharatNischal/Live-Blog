@@ -24,7 +24,7 @@ class Nav extends Component{
   handleGenre(e){
     e.preventDefault();
     var genre = e.target.innerText.toLowerCase();
-    axios.post('http://localhost:5000/blog-api/search/genre',{genre})
+    axios.post('/blog-api/search/genre',{genre})
       .then(res=>{
         console.log(res.data);
         this.props.history.push('/temp', {result:res.data})
@@ -36,7 +36,7 @@ class Nav extends Component{
 
   handleSubmit(e){
     e.preventDefault();
-    axios.post('http://localhost:5000/blog-api/search',{titleSearch:this.state.titleSearch})
+    axios.post('/blog-api/search',{titleSearch:this.state.titleSearch})
       .then(res=>{
         console.log(res.data);
         this.props.history.push('/temp', {result:res.data})

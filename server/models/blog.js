@@ -10,7 +10,7 @@ var blogSchema=new mongoose.Schema({
     author:{
         id:{
             type:mongoose.Schema.Types.ObjectId,
-            rel:User
+            ref:User
     },
         username:String,
         name:String,

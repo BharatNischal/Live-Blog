@@ -22,7 +22,7 @@ router.get("/mystories",(req,res)=>{
   if(!req.user){
     res.json({msg:"sign in required"});
   }
-  db.Blog.find({"author.name":req.user.name})
+  db.Blog.find({"author.username":req.user.username})
     .then(blogs=>{
       res.send(blogs.reverse());
     })

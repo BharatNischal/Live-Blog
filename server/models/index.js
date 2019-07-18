@@ -1,9 +1,9 @@
 const mongoose=require("mongoose");
 mongoose.set("debug",true);
 mongoose.Promise=Promise;
-
-const databaseURL="mongodb://localhost/liveBlog";
-
+console.log(process.env.DATABASEURL);
+const databaseURL=process.env.DATABASEURL||"mongodb://localhost/liveBlog";
+console.log(databaseURL);
 mongoose.connect(databaseURL,{
     useNewUrlParser:true
 })

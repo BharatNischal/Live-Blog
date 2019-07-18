@@ -21,7 +21,7 @@ class CreateBlog extends Component{
     e.preventDefault();
     const data = this.state;
 
-  axios.post(`http://localhost:5000/blog-api/`, { data })
+  axios.post(`/blog-api/`, { data })
       .then(res => {
         console.log(res);
         console.log(res.data);
