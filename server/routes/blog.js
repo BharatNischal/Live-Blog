@@ -253,12 +253,33 @@ router.post("/:userId/follow",(req,res)=>{
   }
   if(req.body.add){
     req.user.following.push(req.params.userId);
-    req.user.save();
+    req.user.save(err=>{
+      if(err){
+        console.log(err);
+      }else{
+        db.User.findById(req.params.userId)
+        .then(authorUser=>{
+          authorUser.followers.push(req.user._id);
+          authorUser.save();
+        })
+        .catch(err=>{console.log(err)});
+      }
+    });
     res.json({msg:"started following "+req.params.userId});
   }else{
     console.log("unfollow");
     req.user.following.splice(req.user.following.indexOf(req.params.userId),1);
-    req.user.save();
+    req.user.save(err=>{
+      if(err){console.log(err);}
+      else{
+        db.User.findById(req.params.userId)
+        .then(authorUser=>{
+          authorUser.followers.splice(authorUser.followers.indexOf(req.user._id),1);
+          authorUser.save();
+        })
+        .catch(err=>{console.log(err)});
+      }
+    });
     res.json({msg:"unfollowed"});
   }
 })

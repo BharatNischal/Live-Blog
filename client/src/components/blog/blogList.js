@@ -34,7 +34,7 @@ const BlogList = (props)=>{
       </div> */}
       <div className="card blog col-sm-10 col-md-5 mt-4 mb-4 ml-4 p-0" style={{boxShadow:'0px 0px 15px 7px #444'}}>
 
-          <img src={b.imageURL}  className="card-img-top" style={{width:'100%'}} alt="blog image"/>
+          <img src={b.imageURL}  className="card-img-top" style={{width:'100%',maxHeight:'40vh'}} alt="blog image"/>
           <div style={{position:'relative',bottom:'40px',padding:'10px'}}>
 
               <img src={b.author.authorURL} style={{borderRadius:'50%',width:'80px',float:'left'}} />

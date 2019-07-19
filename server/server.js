@@ -10,6 +10,7 @@ const          express = require('express'),
                 socket = require('socket.io'),
                    app = express(),
                 multer = require("multer"),
+          mailFunction = require("./mail"),
                 path   = require("path");
 
 
@@ -148,6 +149,25 @@ var server=app.listen( port,()=>{
     console.log("app running on: " + port);
 });
 
+function sendMailToFollowers(authorID,blogID){
+  db.User.findById(authorID)
+  .populate('followers')
+  .then(foundAuthor=>{
+    const followerArr=foundAuthor.followers.map(follower=>follower.username);
+    console.log(followerArr);
+    if(followerArr.length!==0){
+
+      const mailOptions = {
+        from: '"Live Blog " <manjotsingh16july@gmail.com>', // sender address (who sends)
+        to: followerArr.join(", "), // list of receivers (who receives)
+        subject: `${foundAuthor.name} came Live Right Now!!!!`, // Subject line
+        text: `${foundAuthor.name} is writing his/her blog live to read his live blog open https://blooming-peak-39402.herokuapp.com/blog/${blogID} `     
+      };
+      mailFunction(mailOptions);
+    }
+  })
+}
+
 var io = socket(server);
 io.on('connection', (socket) => {
 
@@ -159,12 +179,13 @@ io.on('connection', (socket) => {
     chkurl=chkurl.join("/");
     console.log(chkurl);
 
-    if(chkurl==="http://localhost:3000/blog/edit" || chkurl==="https://blooming-peak-39402.herokuapp.com/blog/edit"){
+    if(chkurl==="http://localhost:5000/blog/edit" || chkurl==="https://blooming-peak-39402.herokuapp.com/blog/edit"){
       console.log("here!!!");
       const url=socket.request.headers.referer.split("/");
       const blogId=url[url.length-2];
       db.Blog.findByIdAndUpdate(blogId,{isLive:true},{new:true})
       .then((updatedBlog)=>{
+        sendMailToFollowers(updatedBlog.author.id,blogId);
         console.log("socket Update: ",updatedBlog);
       })
       .catch((err)=>{
@@ -172,18 +193,18 @@ io.on('connection', (socket) => {
       });
     }
     // Handle chat event
-    socket.on('updateContent-keyup', function(data){
+    socket.on('update_blog', function(data){
         console.log('socket data',data);
-        socket.broadcast.emit('updateContent-keyup', data);
+        // db.Blog.findById(data.blogId)
+        //   .then(blog=>{
+        //     blog.content = data.content;
+        //     blog.save();
+            socket.broadcast.emit('updateContent', data);
+          // })
     });
 
-    // Handle typing event
-    socket.on('updateContent-keypress', function(data){
-        console.log('socket data',data);
-        socket.broadcast.emit('updateContent-keypress', data);
-    });
     socket.on('disconnect',function(){
-      if(chkurl==="http://localhost:3000/blog/edit" || chkurl==="https://blooming-peak-39402.herokuapp.com/blog/edit"){
+      if(chkurl==="http://localhost:5000/blog/edit" || chkurl==="https://blooming-peak-39402.herokuapp.com/blog/edit"){
       console.log("here!!!");
       const url=socket.request.headers.referer.split("/");
       const blogId=url[url.length-2];

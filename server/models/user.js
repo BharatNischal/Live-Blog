@@ -12,6 +12,12 @@ var userSchema=new mongoose.Schema({
     following:[
       {type: String}
     ],
+    followers:[
+      {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+      }
+    ],
     bookmarks:[
       {type:String}
     ]

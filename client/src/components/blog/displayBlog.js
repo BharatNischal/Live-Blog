@@ -23,8 +23,10 @@ class DisplayBlog extends Component{
       following:false,
       comments:[]
     };
-    
-    this.socket = openSocket(window.location.hostname);
+    var socketurlArr=window.location.href.split("/");
+    socketurlArr.splice(3);
+    console.log(socketurlArr.join("/"));
+    this.socket = openSocket(socketurlArr.join("/"));
     
     
     this.handleEdit = this.handleEdit.bind(this);
@@ -96,49 +98,20 @@ class DisplayBlog extends Component{
         console.log(err);
       });
 
-      this.socket.on('updateContent-keypress',function (data) {
+      this.socket.on('updateContent',function (data) {
         const updating = document.getElementById('updating');
         updating.innerText = "Updating...";
         setTimeout(()=>{
           updating.innerText = "";
         },1000)
         if(data.blogId ===displayBlog.state.blogId){
-            if(data.x===13){
-              data.x=10;
-            }
-            const par = displayBlog.state.content===''?'': displayBlog.state.content.substring(0,data.a)+String.fromCharCode(data.x) + displayBlog.state.content.substring(data.b);
-            displayBlog.setState({content:par,cursor:data.a+1});
+            displayBlog.setState({content:data.content,cursor:data.cursor});
         }
       });
-
-      this.socket.on('updateContent-keyup',function (data) {
-        const updating = document.getElementById('updating');
-        updating.innerText = "Updating...";
-        setTimeout(()=>{
-          updating.innerText = "";
-        },1000)
-        if(data.blogId ===displayBlog.state.blogId){
-         if(data.a===data.b){
-            if(data.x==8){
-              const par = displayBlog.state.content.substring(0,data.a) + displayBlog.state.content.substring(data.b+1);
-              displayBlog.setState({content:par,cursor:data.a});
-            }else if(data.x==32){
-              const par = displayBlog.state.content.substring(0,data.a-1) +" " + displayBlog.state.content.substring(data.a-1);
-              displayBlog.setState({content:par,cursor:data.a+1});
-            }
-          }else{  //Selected more than 1 character
-            if(data.x==8){
-              if(displayBlog.state.content[data.a-2]==='\\'){
-                const par = displayBlog.state.content.substring(0,data.a-1) + displayBlog.state.content.substring(data.b);
-                displayBlog.setState({content:par});
-              }else{
-                const par = displayBlog.state.content.substring(0,data.a) + displayBlog.state.content.substring(data.b);
-                displayBlog.setState({content:par});
-              }
-            }
-         }
-        }
-      });
+  }
+  componentDidUpdate(prevProps){
+    //log state
+    console.log("Display Blog State, Cursor: ",this.state.cursor," , content: ",this.state.content);
   }
 
   componentWillUnmount(){
@@ -164,26 +137,13 @@ class DisplayBlog extends Component{
     }
     const {title,imageURL,authorURL,username} = this.state;
     var {content} = this.state;
-    content = this.state.cursor==-1?content:content.substring(0,this.state.cursor)+'%$'+content.substring(this.state.cursor); //%$ is just a symbol
-    var modifiedContentarr=content.split('\n');
-    var modifiedContent2 = modifiedContentarr.map((e,i)=>{
-      return(
-        <p className="text-left updateParagraph" style={{fontSize:'1.3em'}}>{e}</p>
-      )
-    });
-  const modifiedContent =  modifiedContent2.map(function(p){
-      const list = p.props.children.split('%$');
-      if(list.length == 1){
-        return p;
-      }else{
-        return <p className="text-left updateParagraph" style={{fontSize:'1.3em'}}><span>{list[0]}</span><span style={liveCursorStyle}>|</span><span style={authorStyle} >Updating</span><span>{list[1]}</span></p>
-      }
-    });
-    return title ===""?<div className="container mt-5"><img src="https://loading.io/spinners/typing/lg.-text-entering-comment-loader.gif" className="img-responsive"/></div>:(
+    var preContent = this.state.cursor==-1?content:content.substring(0,this.state.cursor)
+    var postContent = this.state.cursor==-1?"":content.substring(this.state.cursor); //%$ is just a symbol
+    return title ===""?<img src="https://loading.io/spinners/typing/lg.-text-entering-comment-loader.gif"/>:(
       <div className="container mt-5">
       <p id="updating" style={{position:'fixed',top:'60px',zIndex:'10',fontWeight:'bold',color:'blue',fontSize:'1.2em',width:'80vw'}} className="align-center"></p>
         <div className="row mb-5">
-          <div className="col-md-6 sm-12">
+          <div className="col-md-6 sm-12 mb-4">
             <h1 className="allign-middle mb-5 text-left">{title}</h1>
             <div>
               <img src={authorURL} style={{borderRadius:'50%',width:'80px'}} className="float-left"/>
@@ -200,7 +160,14 @@ class DisplayBlog extends Component{
         <div className="row mt-5 pt-5">
           <div className="col-md-1 col-sm-0"></div>
           <div className="col-md-10 col-sm-12">
-          {modifiedContent}
+              <div>
+              <p className="text-left">
+               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-wrap'}}> {preContent}</span>
+               {this.state.cursor==-1?null:<span style={liveCursorStyle}>|</span>}
+               {this.state.cursor==-1?null:<span style={authorStyle} >Updating</span>}
+               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-wrap'}}>{postContent}</span>
+              </p>
+              </div>
           </div>
           <div className="col-md-1 col-sm-0"></div>
         </div>
@@ -208,7 +175,7 @@ class DisplayBlog extends Component{
         <span className="text-primary">{this.state.likesCount} </span>Like{this.state.likesCount>1?"s":null}{this.state.liked?<i className="fa fa-heart text-danger" aria-hidden="true" onClick={this.handleLike}></i>:<i className="fa fa-heart-o text-danger" aria-hidden="true" onClick={this.handleLike}></i>}
         <span className="ml-5 mr-5">{this.state.bookmark?<i class="fa fa-bookmark" aria-hidden="true" onClick={this.handleBookmark}> Bookmarked</i>:<i class="fa fa-bookmark-o" aria-hidden="true" onClick={this.handleBookmark}> Bookmark</i>}</span>
         </div>
-        <Comments curUser={this.props.curUser} comments={this.state.comments}/>
+        <Comments authorURL={authorURL} comments={this.state.comments}/>
       </div>
     );
   }

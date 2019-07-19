@@ -40,6 +40,10 @@
     opacity: 1;
   }
 }
+.updateParagraph span{
+  display: inline-block;
+
+}
 
 .card{
   max-width: 90%;
