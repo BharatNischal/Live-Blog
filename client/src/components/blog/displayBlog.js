@@ -128,21 +128,8 @@ class DisplayBlog extends Component{
     }
     const {title,imageURL,authorURL,username} = this.state;
     var {content} = this.state;
-    content = this.state.cursor==-1?content:content.substring(0,this.state.cursor)+'%$'+content.substring(this.state.cursor); //%$ is just a symbol
-    var modifiedContentarr=content.split('\n');
-    var modifiedContent2 = modifiedContentarr.map((e,i)=>{
-      return(
-        <p className="text-left updateParagraph" style={{fontSize:'1.3em'}}>{e}</p>
-      )
-    });
-  const modifiedContent =  modifiedContent2.map(function(p){
-      const list = p.props.children.split('%$');
-      if(list.length == 1){
-        return p;
-      }else{
-        return <p className="text-left updateParagraph" style={{fontSize:'1.3em'}}><span>{list[0]}</span><span style={liveCursorStyle}>|</span><span style={authorStyle} >Updating</span><span>{list[1]}</span></p>
-      }
-    });
+    var preContent = this.state.cursor==-1?content:content.substring(0,this.state.cursor)
+    var postContent = this.state.cursor==-1?"":content.substring(this.state.cursor); //%$ is just a symbol
     return title ===""?<img src="https://loading.io/spinners/typing/lg.-text-entering-comment-loader.gif"/>:(
       <div className="container mt-5">
       <p id="updating" style={{position:'fixed',top:'60px',zIndex:'10',fontWeight:'bold',color:'blue',fontSize:'1.2em',width:'80vw'}} className="align-center"></p>
@@ -164,7 +151,14 @@ class DisplayBlog extends Component{
         <div className="row mt-5 pt-5">
           <div className="col-md-1 col-sm-0"></div>
           <div className="col-md-10 col-sm-12">
-          {modifiedContent}
+              <div>
+              <p className="text-left">
+               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-line'}}> {preContent}</span>
+               {this.state.cursor==-1?null:<span style={liveCursorStyle}>|</span>}
+               {this.state.cursor==-1?null:<span style={authorStyle} >Updating</span>}
+               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-line'}}>{postContent}</span>
+              </p>
+              </div>
           </div>
           <div className="col-md-1 col-sm-0"></div>
         </div>
