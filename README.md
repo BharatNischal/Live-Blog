@@ -14,4 +14,4 @@ The deployed version can be found on
 
 https://blooming-peak-39402.herokuapp.com/
 
-**The deployed version is based on the _master branch_ and this version of project may not include all the features and may have some bugs. Read the _master_ _branch_ code for details**
+**The deployed version is based on the _master branch_ and this version of project may not include all the features and may have some bugs. Read the _master branch_ code for details**
