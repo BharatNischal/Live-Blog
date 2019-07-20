@@ -8,7 +8,9 @@ const          express = require('express'),
             bodyParser = require("body-parser"),
                   cors = require("cors"),
                 socket = require('socket.io'),
-                   app = express()
+                   app = express(),
+                 async = require("async"),
+                crypto = require("crypto"),
                 multer = require("multer"),
                 path   = require("path");
 
@@ -113,6 +115,87 @@ app.post("/api/login",passport.authenticate("local",{
         user:req.user
       });
 });
+
+// forgot password
+router.post('api/forget', function(req, res, next) {
+  async.waterfall([
+    function(done) {
+      crypto.randomBytes(20, function(err, buf) {
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done) {
+      db.User.findOne({ username: req.body.username }, function(err, user) {
+        if (!user) {
+          res.json({msg:"No account with that email address exists."});
+        }
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+        user.save(function(err) {
+          done(err, token, user);
+        });
+      });
+    },
+    function(token, user, done) {
+      var msg = {
+            to: user.username,
+            from: 'nischalbharat4819@gmail.com',
+            subject: 'Printing_aid Password Reset',
+            text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+};
+      sgMail.send(msg, function(err) {
+        console.log('mail sent');
+        done(err, 'done');
+      });
+    }
+  ], function(err) {
+    if (err)     res.json({msg:err.message});
+    res.json({msg:""});
+  });
+});
+
+router.post('/api/reset/:token', function(req, res) {
+  async.waterfall([
+    function(done) {
+      db.User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+        if (!user) {
+          res.json({msg:'Password reset token is invalid or has expired.'});
+        }
+          user.setPassword(req.body.password, function(err) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+
+            user.save(function(err) {
+              req.logIn(user, function(err) {
+                done(err, user);
+              });
+            });
+          })
+      });
+    },
+    function(user, done) {
+      var msg = {
+            to: user.username,
+            from: 'NoReply@printing_aid.com',
+            subject: 'Your password has been changed',
+            text: 'Hello,\n\n' +
+          'This is a confirmation that the password for your account ' + user.username + ' has just been changed.\n'
+        };
+      sgMail.send(msg, function(err) {
+        done(err);
+      });
+    }
+  ], function(err) {
+    res.json({msg:"Success! Your password has been changed."});
+  });
+});
+
+
 
 app.get("/api/err",(req,res)=>{
   res.json({success:"false"});

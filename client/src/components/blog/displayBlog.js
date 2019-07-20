@@ -153,10 +153,10 @@ class DisplayBlog extends Component{
           <div className="col-md-10 col-sm-12">
               <div>
               <p className="text-left">
-               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-line'}}> {preContent}</span>
+               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-wrap'}}> {preContent}</span>
                {this.state.cursor==-1?null:<span style={liveCursorStyle}>|</span>}
                {this.state.cursor==-1?null:<span style={authorStyle} >Updating</span>}
-               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-line'}}>{postContent}</span>
+               <span className="text-left updateParagraph" style={{fontSize:'1.3em',whiteSpace:'pre-wrap'}}>{postContent}</span>
               </p>
               </div>
           </div>

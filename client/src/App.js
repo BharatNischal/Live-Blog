@@ -3,6 +3,8 @@ import {BrowserRouter,Route,Switch} from 'react-router-dom';
 import './App.css';
 import Signin from './components/auth/signinForm';
 import Signup from './components/auth/signupForm';
+import Forget from './components/auth/forget';
+import ResetPassword from './components/auth/resetPassord';
 import Nav from './components/layout/nav';
 import CreateBlog from './components/blog/createBlog';
 import Dashboard from './components/dashboard/dashboard';
@@ -25,7 +27,7 @@ class App extends  Component{
         this.setState({user:res.data});
       }
 
-      
+
     })
     .catch(err=>{
       console.log(err);
@@ -47,6 +49,7 @@ class App extends  Component{
             <Route exact path='/temp' component={Temp} />
             <Route exact path='/search' component={DashboardSearch} />
             <Route exact path='/createBlog' component={CreateBlog}/>
+            <Route exact path='/forget' component={Forget}/>
             <Route exact path="/signin"
               render={(props) => <Signin {...props} isLogin={this.state.user} login={this.loginHandler} />}
             />
@@ -54,7 +57,8 @@ class App extends  Component{
               render={(props) => <Signup {...props} isLogin={this.state.user} login={this.loginHandler} />}
             />
             <Route exact path="/blog/:blogId" component={DisplayBlog}/>
-            <Route exact path="/blog/:blogId/edit"  
+            <Route exact path="/reset/:token" component={ResetPassword}/>
+            <Route exact path="/blog/:blogId/edit"
               render={(props) => <UpdateBlog {...props} isLogin={this.state.user} />}
             />
           </Switch>
