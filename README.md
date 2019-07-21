@@ -1,6 +1,6 @@
 # Live-Blog
 
-# Deplyed Version
+# Deployed Version
 The deployed version is available on 
 https://blooming-peak-39402.herokuapp.com/
 
