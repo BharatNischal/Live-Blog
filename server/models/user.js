@@ -20,7 +20,9 @@ var userSchema=new mongoose.Schema({
     ],
     bookmarks:[
       {type:String}
-    ]
+    ],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 userSchema.plugin(passportLocalMongoose);
 module.exports=mongoose.model("User",userSchema);

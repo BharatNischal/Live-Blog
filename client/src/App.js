@@ -5,6 +5,8 @@ import Signin from './components/auth/signinForm';
 import Signup from './components/auth/signupForm';
 import Nav from './components/layout/nav';
 import CreateBlog from './components/blog/createBlog';
+import Forget from './components/auth/forget';
+import ResetPassword from './components/auth/resetPassword';
 import Dashboard from './components/dashboard/dashboard';
 import Temp from './components/dashboard/temp';
 import DashboardSearch from './components/dashboard/dashboardSearch';
@@ -46,6 +48,7 @@ class App extends  Component{
             <Route exact path='/' component={Dashboard} />
             <Route exact path='/temp' component={Temp} />
             <Route exact path='/search' component={DashboardSearch} />
+            <Route exact path='/forget' component={Forget}/>
             <Route exact path='/createBlog' component={CreateBlog}/>
             <Route exact path="/signin"
               render={(props) => <Signin {...props} isLogin={this.state.user} login={this.loginHandler} />}
@@ -56,6 +59,7 @@ class App extends  Component{
             <Route exact path="/blog/:blogId" 
               render={(props) => <DisplayBlog {...props} curUser={this.state.user}  />}
             />
+            <Route exact path="/reset/:token" component={ResetPassword}/>
             <Route exact path="/blog/:blogId/edit"  
               render={(props) => <UpdateBlog {...props} isLogin={this.state.user} />}
             />

@@ -9,6 +9,8 @@ const          express = require('express'),
                   cors = require("cors"),
                 socket = require('socket.io'),
                    app = express(),
+                 async = require("async"),
+                crypto = require("crypto"),
                 multer = require("multer"),
           mailFunction = require("./mail"),
                 path   = require("path");
@@ -129,6 +131,90 @@ app.post("/api/login",passport.authenticate("local",{
         user:req.user
       });
 });
+
+// forgot password
+app.post('/api/forget', function(req, res, next) {
+  async.waterfall([
+    function(done) {
+      crypto.randomBytes(20, function(err, buf) {
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done) {
+      db.User.findOne({ username: req.body.username }, function(err, user) {
+        if (!user) {
+          res.json({msg:"No account with that email address exists."});
+        }
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+        user.save(function(err) {
+          done(err, token, user);
+        });
+      });
+    },
+    function(token, user, done) {
+      var fullUrl = req.protocol + '://' + req.get('host') ;
+      const msg = {
+        from: '"Live Blog " <manjotsingh16july@gmail.com>', // sender address (who sends)
+        to: user.username, // list of receivers (who receives)
+        subject: 'Live_Blog Password Reset', // Subject line
+        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+                Please click on the following link, or paste this into your browser to complete the process:\n\n ${fullUrl}/reset/${token} \n\n
+                If you did not request this, please ignore this email and your password will remain unchanged.\n`     
+      };
+      
+      mailFunction(msg,(err,info)=>{
+        done(err,'done');
+      });
+      
+    }
+  ], function(err) {
+    if (err)     res.json({msg:err.message});
+    res.json({msg:""});
+  });
+});
+
+app.post('/api/reset/:token', function(req, res) {
+  async.waterfall([
+    function(done) {
+      db.User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+        if (!user) {
+          return res.json({msg:'Password reset token is invalid or has expired.'});
+        }
+          user.setPassword(req.body.password, function(err) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+
+            user.save(function(err) {
+              req.logIn(user, function(err) {
+                done(err, user);
+              });
+            });
+          })
+      });
+    },
+    function(user, done) {
+      const msg = {
+        from: '"Live Blog " <manjotsingh16july@gmail.com>', // sender address (who sends)
+        to: user.username, // list of receivers (who receives)
+        subject: 'Your password has been changed', // Subject line
+        text: `This is a confirmation that the password for your account ${user.username} has just been changed. `     
+      };
+      mailFunction(msg,(err,info)=>{
+        done(err,'done');
+      });
+      
+    }
+  ], function(err) {
+    if(err){return res.json({msg:err});}
+    res.json({msg:`Success! Your password for username has been changed.`});
+  });
+});
+
+
+
 
 app.get("/api/err",(req,res)=>{
   res.json({success:"false"});
