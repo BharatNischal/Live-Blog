@@ -1,4 +1,5 @@
 # Live-Blog
+A blog which is updated character by character as the writer writes on it.
 
 # Deployed Version
 The deployed version is available on 
