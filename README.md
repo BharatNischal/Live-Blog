@@ -3,7 +3,7 @@ A blog which is updated character by character as the writer writes on it.
 
 # Deployed Version
 The deployed version is available on 
-https://blooming-peak-39402.herokuapp.com/
+http://csocliveblog.herokuapp.com/
 
 # Run Locally
 You can't run this version locally as all the changes related to production have been made
